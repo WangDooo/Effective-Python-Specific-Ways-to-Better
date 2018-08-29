@@ -1,0 +1,3 @@
+Effective Python 59 Ways to Write Better Python 18.8.29 
+Brett Slatkin
+
