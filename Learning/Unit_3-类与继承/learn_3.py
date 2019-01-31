@@ -1,21 +1,122 @@
+import collections
+
 #================================================================
 # 22. 尽量用辅助类来维护程序的状态， 而不要用字典和元组
+# 保存内部状态的字典如果变得比较复杂，那就应该吧这些代码拆解为多个辅助类
 #----------------------------------------------------------------
-class SimpleGradebook(object):
-	def __init__(self):
-		self._grades = {}
+# class SimpleGradebook(object):
+# 	def __init__(self):
+# 		self._grades = {}
 
-	def add_student(self, name):
-		self._grades[name] = []
+# 	def add_student(self, name):
+# 		self._grades[name] = []
 
-	def report_grade
+# 	def report_grade(self, name, score):
+# 		self._grades[name].append(score)
+
+# 	def average_grade(self, name):
+# 		grades = self._grades[name]
+# 		return sum(grades) / len(grades)
+
+# book = SimpleGradebook()
+# book.add_student('wang')
+# book.report_grade('wang', 90)
+# # print(book.average_grade('wang'))
+
+# class BySubjectGradebook(object):
+# 	def __init__(self):
+# 		self._grades = {}
+# 	def add_student(self, name):
+# 		self._grades[name] = {}
+# 	# 处理嵌套两层的字典
+# 	def report_grade(self, name, subject, grade):
+# 		by_subject = self._grades[name]
+# 		grade_list = by_subject.setdefault(subject, [])
+# 		grade_list.append(grade)
+
+# 	def average_grade(self, name):
+# 		by_subject = self._grades[name]
+# 		total, count = 0, 0
+# 		for grades in by_subject.values():
+# 			total += sum(grades)
+# 			count += len(grades)
+# 		print(total/count)
+
+# 	def print(self):
+# 		print(self._grades)
+
+# book = BySubjectGradebook()
+# book.add_student('w')
+# book.report_grade('w','math',12)
+# book.report_grade('w','math',32)
+# book.report_grade('w','chinese',1)
+# book.average_grade('w')
+# book.print()
+
+# import collections
+# Grade = collections.namedtuple('Grade',('score','weight'))
+# class Subject(object):
+# 	def __init__(self):
+# 		self._grades = []
+
+# 	def report_grade(self, score, weight):
+# 		self._grades.append(Grade(score, weight))
+
+# 	def average_grade(self):
+# 		total, total_weight = 0, 0
+# 		for grade in self._grades:
+# 			total += grade.score * grade.weight
+# 			total_weight += grade.weight
+# 		return total / total_weight
+
+# class Student(object):
+# 	def __init__(self):
+# 		self._subjects = {}
+
+# 	def subject(self, name):
+# 		if name not in self._subjects:
+# 			self._subjects[name] = Subject()
+# 		return self._subjects[name]
+
+# 	def average_grade(self):
+# 		total, count = 0, 0
+# 		for subject in self._subjects.values():
+# 			total += subject.average_grade()
+# 			count += 1
+# 		return total / count
+
+# class Gradebook(object):
+# 	def __init__(self):
+# 		self._students = {}
+
+# 	def student(self, name):
+# 		if name not in self._students:
+# 			self._students[name] = Student()
+# 		return self._students[name]
+
+# book = Gradebook()
+# w = book.student('w')
+# math = w.subject('math')
+# math.report_grade(100, 1)
+# math.report_grade(50, 1)
+# print(w.average_grade())
 #----------------------------------------------------------------
 
 
 #================================================================
-# 
+# 23. 简单的接口应该接受函数， 而不是类的实例
 #----------------------------------------------------------------
+def log_missing():
+	print('Key added')
+	return 0
 
+current = {'green':12, 'blue':9}
+increments = [('red', 5), ('blue', 88), ('white', 7)]
+result = collections.defaultdict(log_missing, current)
+print('Before', dict(result))
+for key, amount in increments:
+	result[key] += amount
+print('After', dict(result))
 #----------------------------------------------------------------
 
 
