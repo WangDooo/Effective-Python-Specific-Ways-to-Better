@@ -1,199 +1,89 @@
-import collections
-
 #================================================================
-# 22. 尽量用辅助类来维护程序的状态， 而不要用字典和元组
-# 保存内部状态的字典如果变得比较复杂，那就应该吧这些代码拆解为多个辅助类
+# 29. 用纯属性取代get和set方法
+# 访问对象的某个属性，需要表现出特殊行为，就用@property来定义这种行为
 #----------------------------------------------------------------
-# class SimpleGradebook(object):
-# 	def __init__(self):
-# 		self._grades = {}
+class Resistor(object):
+	def __init__(self, ohms):
+		self.ohms = ohms
+		self.voltage = 0
+		self.current = 0
 
-# 	def add_student(self, name):
-# 		self._grades[name] = []
+r1 = Resistor(300)
+print(r1.ohms)
+r1.ohms = 400
+print(r1.ohms)
+r1.ohms += 800
+print(r1.ohms)
 
-# 	def report_grade(self, name, score):
-# 		self._grades[name].append(score)
+class VoltageResistace(Resistor):
+	def __init__(self, ohms):
+		super().__init__(ohms)
+		self._voltage = 0
 
-# 	def average_grade(self, name):
-# 		grades = self._grades[name]
-# 		return sum(grades) / len(grades)
+	@property
+	def voltage(self):
+		return self._voltage
 
-# book = SimpleGradebook()
-# book.add_student('wang')
-# book.report_grade('wang', 90)
-# # print(book.average_grade('wang'))
+	@voltage.setter
+	def voltage(self, voltage):
+		self._voltage = voltage
+		self.current = self._voltage / self.ohms
 
-# class BySubjectGradebook(object):
-# 	def __init__(self):
-# 		self._grades = {}
-# 	def add_student(self, name):
-# 		self._grades[name] = {}
-# 	# 处理嵌套两层的字典
-# 	def report_grade(self, name, subject, grade):
-# 		by_subject = self._grades[name]
-# 		grade_list = by_subject.setdefault(subject, [])
-# 		grade_list.append(grade)
+r2 = VoltageResistace(1000)
+print("Before:", r2.current)
+r2.voltage = 100
+print("After:", r2.current)
 
-# 	def average_grade(self, name):
-# 		by_subject = self._grades[name]
-# 		total, count = 0, 0
-# 		for grades in by_subject.values():
-# 			total += sum(grades)
-# 			count += len(grades)
-# 		print(total/count)
 
-# 	def print(self):
-# 		print(self._grades)
+class BoundedResistance(Resistor):
+	def __init__(self, ohms):
+		super().__init__(ohms)
 
-# book = BySubjectGradebook()
-# book.add_student('w')
-# book.report_grade('w','math',12)
-# book.report_grade('w','math',32)
-# book.report_grade('w','chinese',1)
-# book.average_grade('w')
-# book.print()
+	@property 
+	def ohms(self):
+		return self._ohms
 
-# import collections
-# Grade = collections.namedtuple('Grade',('score','weight'))
-# class Subject(object):
-# 	def __init__(self):
-# 		self._grades = []
+	@ohms.setter
+	def ohms(self, ohms):
+		if ohms <= 0:
+			raise ValueError('%f ohms must be > 0' % ohms)
+		self._ohms = ohms
 
-# 	def report_grade(self, score, weight):
-# 		self._grades.append(Grade(score, weight))
+r3 = BoundedResistance(1000)
+r3.ohms = 6
+print(r3.ohms)
 
-# 	def average_grade(self):
-# 		total, total_weight = 0, 0
-# 		for grade in self._grades:
-# 			total += grade.score * grade.weight
-# 			total_weight += grade.weight
-# 		return total / total_weight
+# 使用@property来防止父类的属性遭到修改
+class FixedResistance(Resistor):
+	def __init__(self, ohms):
+		super().__init__(ohms)
 
-# class Student(object):
-# 	def __init__(self):
-# 		self._subjects = {}
+	@property
+	def ohms(self):
+		return self._ohms
 
-# 	def subject(self, name):
-# 		if name not in self._subjects:
-# 			self._subjects[name] = Subject()
-# 		return self._subjects[name]
+	@ohms.setter
+	def ohms(self, ohms):
+		if hasattr(self, '_ohms'):
+			raise AttributeError("Can't set attribute")
+		self._ohms = ohms
 
-# 	def average_grade(self):
-# 		total, count = 0, 0
-# 		for subject in self._subjects.values():
-# 			total += subject.average_grade()
-# 			count += 1
-# 		return total / count
-
-# class Gradebook(object):
-# 	def __init__(self):
-# 		self._students = {}
-
-# 	def student(self, name):
-# 		if name not in self._students:
-# 			self._students[name] = Student()
-# 		return self._students[name]
-
-# book = Gradebook()
-# w = book.student('w')
-# math = w.subject('math')
-# math.report_grade(100, 1)
-# math.report_grade(50, 1)
-# print(w.average_grade())
+r4 = FixedResistance(1000)
+r4.ohms = 90
 #----------------------------------------------------------------
 
 
 #================================================================
-# 23. 简单的接口应该接受函数， 而不是类的实例
+# 
 #----------------------------------------------------------------
-# def log_missing():
-# 	print('Key added')
-# 	return 0
 
-# current = {'green':12, 'blue':9}
-# increments = [('red', 5), ('blue', 88), ('white', 7)]
-# # result = collections.defaultdict(log_missing, current)
-# # print('Before', dict(result))
-# # for key, amount in increments:
-# # 	result[key] += amount
-# # print('After', dict(result))
-
-# def increment_with_report(current, increments):
-# 	added_count = 0
-
-# 	def missing():
-# 		nonlocal added_count
-# 		added_count += 1
-# 		return 0
-
-# 	result = collections.defaultdict(missing, current)
-# 	for key, amount in increments:
-# 		result[key] += amount
-
-# 	return result, added_count
-
-# result, count = increment_with_report(current, increments)
-# print(result,count)
-
-# class CountMissing(object):
-# 	def __init__(self):
-# 		self.added = 0
-
-# 	def missing(self):
-# 		self.added += 1
-# 		return 0
-
-# counter = CountMissing()
-# result = collections.defaultdict(counter.missing, current)
-# for key, amount in increments:
-# 	result[key] += amount
-# print(dict(result), counter.added)
 #----------------------------------------------------------------
 
 
 #================================================================
-# 24. 以 @classmethod 形式的多态去通用地对待
+# 
 #----------------------------------------------------------------
-class InputData(objcet):
-	def read(self):
-		raise NotImplementedError
 
-class PathInputData(InputData):
-	def __init__(self, path):
-		super().__init__()
-		self.path = path
-
-	def read(self):
-		return open(self.path).read()
-
-class Worker(object):
-	def __init__(self, input_data):
-		self.input_data = input_data
-		self.result = None
-
-	def map(self):
-		raise NotImplementedError
-
-	def reduce(self, other):
-		raise NotImplementedError
-
-class LineCountWorker(Worker):
-	def map(self):
-		data = self.input_data.read()
-		self.result = data.count('\n')
-
-	def reduce(self, other):
-		self.result += other.result
-
-def generate_inputs(data_dir):
-	for name in os.listdir(data_dir):
-		yield PathInputData(os.path.join(data_dir, name))
-
-def create_workers(input_list):
-	workers = []
-	for input_data in input_list:
-		workers.append(LineCountWorker(input_data))
-	return workers
 #----------------------------------------------------------------
 
 
