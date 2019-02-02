@@ -106,24 +106,65 @@ import collections
 #================================================================
 # 23. 简单的接口应该接受函数， 而不是类的实例
 #----------------------------------------------------------------
-def log_missing():
-	print('Key added')
-	return 0
+# def log_missing():
+# 	print('Key added')
+# 	return 0
 
-current = {'green':12, 'blue':9}
-increments = [('red', 5), ('blue', 88), ('white', 7)]
-result = collections.defaultdict(log_missing, current)
-print('Before', dict(result))
-for key, amount in increments:
-	result[key] += amount
-print('After', dict(result))
+# current = {'green':12, 'blue':9}
+# increments = [('red', 5), ('blue', 88), ('white', 7)]
+# # result = collections.defaultdict(log_missing, current)
+# # print('Before', dict(result))
+# # for key, amount in increments:
+# # 	result[key] += amount
+# # print('After', dict(result))
+
+# def increment_with_report(current, increments):
+# 	added_count = 0
+
+# 	def missing():
+# 		nonlocal added_count
+# 		added_count += 1
+# 		return 0
+
+# 	result = collections.defaultdict(missing, current)
+# 	for key, amount in increments:
+# 		result[key] += amount
+
+# 	return result, added_count
+
+# result, count = increment_with_report(current, increments)
+# print(result,count)
+
+# class CountMissing(object):
+# 	def __init__(self):
+# 		self.added = 0
+
+# 	def missing(self):
+# 		self.added += 1
+# 		return 0
+
+# counter = CountMissing()
+# result = collections.defaultdict(counter.missing, current)
+# for key, amount in increments:
+# 	result[key] += amount
+# print(dict(result), counter.added)
 #----------------------------------------------------------------
 
 
 #================================================================
-# 
+# 24. 以 @classmethod 形式的多态去通用地对待
 #----------------------------------------------------------------
+class InputData(objcet):
+	def read(self):
+		raise NotImplementedError
 
+class PathInputData(InputData):
+	def __init__(self, path):
+		super().__init__()
+		self.path = path
+
+	def read(self):
+		return open(self.path).read()
 #----------------------------------------------------------------
 
 
