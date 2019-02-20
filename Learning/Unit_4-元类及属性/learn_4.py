@@ -2,81 +2,121 @@
 # 29. 用纯属性取代get和set方法
 # 访问对象的某个属性，需要表现出特殊行为，就用@property来定义这种行为
 #----------------------------------------------------------------
-class Resistor(object):
-	def __init__(self, ohms):
-		self.ohms = ohms
-		self.voltage = 0
-		self.current = 0
+# class Resistor(object):
+# 	def __init__(self, ohms):
+# 		self.ohms = ohms
+# 		self.voltage = 0
+# 		self.current = 0
 
-r1 = Resistor(300)
-print(r1.ohms)
-r1.ohms = 400
-print(r1.ohms)
-r1.ohms += 800
-print(r1.ohms)
+# r1 = Resistor(300)
+# print(r1.ohms)
+# r1.ohms = 400
+# print(r1.ohms)
+# r1.ohms += 800
+# print(r1.ohms)
 
-class VoltageResistace(Resistor):
-	def __init__(self, ohms):
-		super().__init__(ohms)
-		self._voltage = 0
+# class VoltageResistace(Resistor):
+# 	def __init__(self, ohms):
+# 		super().__init__(ohms)
+# 		self._voltage = 0
 
-	@property
-	def voltage(self):
-		return self._voltage
+# 	@property
+# 	def voltage(self):
+# 		return self._voltage
 
-	@voltage.setter
-	def voltage(self, voltage):
-		self._voltage = voltage
-		self.current = self._voltage / self.ohms
+# 	@voltage.setter
+# 	def voltage(self, voltage):
+# 		self._voltage = voltage
+# 		self.current = self._voltage / self.ohms
 
-r2 = VoltageResistace(1000)
-print("Before:", r2.current)
-r2.voltage = 100
-print("After:", r2.current)
+# r2 = VoltageResistace(1000)
+# print("Before:", r2.current)
+# r2.voltage = 100
+# print("After:", r2.current)
 
 
-class BoundedResistance(Resistor):
-	def __init__(self, ohms):
-		super().__init__(ohms)
+# class BoundedResistance(Resistor):
+# 	def __init__(self, ohms):
+# 		super().__init__(ohms)
 
-	@property 
-	def ohms(self):
-		return self._ohms
+# 	@property 
+# 	def ohms(self):
+# 		return self._ohms
 
-	@ohms.setter
-	def ohms(self, ohms):
-		if ohms <= 0:
-			raise ValueError('%f ohms must be > 0' % ohms)
-		self._ohms = ohms
+# 	@ohms.setter
+# 	def ohms(self, ohms):
+# 		if ohms <= 0:
+# 			raise ValueError('%f ohms must be > 0' % ohms)
+# 		self._ohms = ohms
 
-r3 = BoundedResistance(1000)
-r3.ohms = 6
-print(r3.ohms)
+# r3 = BoundedResistance(1000)
+# r3.ohms = 6
+# print(r3.ohms)
 
-# 使用@property来防止父类的属性遭到修改
-class FixedResistance(Resistor):
-	def __init__(self, ohms):
-		super().__init__(ohms)
+# # 使用@property来防止父类的属性遭到修改
+# class FixedResistance(Resistor):
+# 	def __init__(self, ohms):
+# 		super().__init__(ohms)
 
-	@property
-	def ohms(self):
-		return self._ohms
+# 	@property
+# 	def ohms(self):
+# 		return self._ohms
 
-	@ohms.setter
-	def ohms(self, ohms):
-		if hasattr(self, '_ohms'):
-			raise AttributeError("Can't set attribute")
-		self._ohms = ohms
+# 	@ohms.setter
+# 	def ohms(self, ohms):
+# 		if hasattr(self, '_ohms'):
+# 			raise AttributeError("Can't set attribute")
+# 		self._ohms = ohms
 
-r4 = FixedResistance(1000)
-r4.ohms = 90
+# r4 = FixedResistance(1000)
+# r4.ohms = 90
 #----------------------------------------------------------------
 
 
 #================================================================
-# 
+# 30. 考虑用@property 来代替属性重构
 #----------------------------------------------------------------
+from datetime import datetime,timedelta
 
+# 实现带有配额的漏桶
+class Bucket(object):
+	def __init__(self, period):
+		self.period_delta = timedelta(seconds=period)
+		self.reset_time = datetime.now()
+		self.quota = 0
+
+	def __repr__(self):
+		return 'Bucket(quota=%d)' % self.quota
+
+def fill(bucket, amount):
+	now = datetime.now()
+	if now - bucket.reset_time > bucket.period_delta:
+		bucket.quota = 0
+		bucket.reset_time = now
+	bucket.quota += amount
+
+def deduct(bucket, amount):
+	now = datetime.now()
+	if now - bucket.reset_time > bucket.period_delta:
+		return False
+	if bucket.quota - amount < 0:
+		return False
+	bucket.quota -= amount
+	return True
+
+bucket = Bucket(60)
+fill(bucket, 100)
+print(bucket)
+
+if deduct(bucket, 99):
+	print('Had 99 quota')
+else:
+	print('Not enough for 99 quota')
+
+if deduct(bucket, 3):
+	print('Had 3 quota')
+else:
+	print('Not enough for 3 quota')
 #----------------------------------------------------------------
 
 

@@ -1,14 +1,94 @@
 #================================================================
 # 36. 用subprocess模块来管理子进程
 #----------------------------------------------------------------
+# import subprocess
+# from time import time
 
+# proc = subprocess.Popen(['echo', 'Hello world'], stdout=subprocess.PIPE)
+# out, err = proc.communicate()
+# print(out.decode('utf-8'))
+
+# def run_sleep(period):
+# 	proc = subprocess.Popen(['sleep', str(period)])
+# 	return proc
+
+# start = time()
+# procs = []
+# for _ in range(10):
+# 	proc = run_sleep(0.1)
+# 	procs.append(proc)
+
+# for proc in procs:
+# 	proc.communicate(timeout=0.5)
+# end = time()
+# print("Finished in %.3f s" % (end-start)) 
 #----------------------------------------------------------------
 
 
 #================================================================
-# 
+# 37. 可以用线程来执行阻塞式I/O，但不要用它做平行计算
 #----------------------------------------------------------------
+from time import time
 
+# def factorize(number):
+# 	for i in range(1, number+1):
+# 		if number % i == 0:
+# 			yield i
+
+# numbers = [2131332, 1324132, 1898989, 1078932]
+# start = time()
+# for number in numbers:
+# 	list(factorize(number))
+# end = time()
+# print('Took %.3f s' % (end-start))
+
+# from threading import Thread
+
+# class FactorizeThread(Thread):
+# 	def __init__(self, number):
+# 		super().__init__()
+# 		self.number = number
+
+# 	def run(self):
+# 		self.factors = list(factorize(self.number))
+
+# start2 = time()
+# threads = []
+# for number in numbers:
+# 	thread = FactorizeThread(number)	
+# 	thread.start()
+# 	threads.append(thread)
+
+# for thread in threads:
+# 	thread.join()
+
+# end2 = time()
+# print('Took %.3f s' % (end2-start2))
+
+import select
+from threading import Thread
+
+select.select
+def slow_systemcall():
+	select.select([],[],[],0.1)
+
+start = time()
+for _ in range(5):
+	slow_systemcall()
+end = time()
+print('Took %.3f s' % (end-start))
+
+start = time()
+threads = []
+for _ in range(5):
+	thread = Thread(target=slow_systemcall)
+	thread.start()
+	threads.append(thread)
+
+for thread in threads:
+	thread.join()
+end = time()
+print('Took %.3f' % (end-start))
 #----------------------------------------------------------------
 
 
