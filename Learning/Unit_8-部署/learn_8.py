@@ -42,7 +42,7 @@
 # def insertion_sort(data):
 # 	result = []
 # 	for value in data:
-# 		insert_value(result, value)
+# 		insert_value_new(result, value)
 # 	return result
 
 # def insert_value(array, value):
@@ -51,39 +51,64 @@
 # 			array.insert(i, value)
 # 			return
 # 	array.append(value)
+
+# from bisect import bisect_left
+
+# def insert_value_new(array, value):
+# 	i = bisect_left(array, value)
+# 	array.insert(i, value)
+
+# from random import randint
+
+# max_size = 10**4
+# data = [randint(0, max_size) for _ in range(max_size)]
+# test = lambda: insertion_sort(data)
+
+# import cProfile
+
+# profiler = cProfile.Profile()
+# profiler.runcall(test)
+
+# import pstats
+
+# stats = pstats.Stats(profiler)
+# stats.strip_dirs()
+# stats.sort_stats('cumulative')
+# stats.print_stats()
+# stats.print_callers()
 #----------------------------------------------------------------
 
 
 #================================================================
 # 59. 用tracemalloc 来掌握内存的使用及泄露情况
 #----------------------------------------------------------------
-# using_gc
-import gc
+# # using_gc
+# import gc
 
-found_objcets = gc.get_objects()
-print('%d objects before' % len(found_objcets))
+# found_objcets = gc.get_objects()
+# print('%d objects before' % len(found_objcets))
 
-import waste_memory
-x = waste_memory.run()
-found_objcets = gc.get_objects()
-print('%d objects after' % len(found_objcets))
+# import waste_memory
+# x = waste_memory.run()
+# found_objcets = gc.get_objects()
+# print('%d objects after' % len(found_objcets))
 
-for obj in found_objcets[:3]:
-	print(repr(obj)[:100])
+# for obj in found_objcets[:3]:
+# 	print(repr(obj)[:100])
 
-# top_n
+# # top_n
 
-import tracemalloc
-tracemalloc.start(10) # Save up to 10 stack frames
+# import tracemalloc
+# tracemalloc.start(10) # Save up to 10 stack frames
 
-time1 = tracemalloc.take_snapshot()
-import waste_memory
-x = waste_memory.run()
-time2 = tracemalloc.take_snapshot()
+# time1 = tracemalloc.take_snapshot()
+# import waste_memory
+# x = waste_memory.run()
+# time2 = tracemalloc.take_snapshot()
 
-stats = time2.compare_to(time1, 'lineno')
-for stat in stats[:3]:
-	print(stat)
+# stats = time2.compare_to(time1, 'lineno')
+# for stat in stats[:3]:
+# 	print(stat)
 #----------------------------------------------------------------
 
 
