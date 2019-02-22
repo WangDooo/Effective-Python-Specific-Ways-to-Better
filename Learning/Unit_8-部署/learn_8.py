@@ -8,11 +8,11 @@
 #================================================================
 # 55. 通过repr字符串来输出调试信息
 #----------------------------------------------------------------
-print(5)
-print('5')
-a = '\x07'
-print(a)
-print(repr(a))
+# print(5)
+# print('5')
+# a = '\x07'
+# print(a)
+# print(repr(a))
 #----------------------------------------------------------------
 
 
@@ -24,16 +24,33 @@ print(repr(a))
 
 
 #================================================================
-# 57.
+# 57. 考虑使用pdb实现交互调试
 #----------------------------------------------------------------
+# def complex_func(a, b, c):
+# 	temp = a * b * c
+# 	temp2 = a + b**c
+# 	import pdb; pdb.set_trace()
+# 	return temp2 - temp
 
+# print(complex_func(1, 2, 4))
 #----------------------------------------------------------------
 
 
 #================================================================
-# 58.
+# 58. 先分析性能，然后再优化
 #----------------------------------------------------------------
+# def insertion_sort(data):
+# 	result = []
+# 	for value in data:
+# 		insert_value(result, value)
+# 	return result
 
+# def insert_value(array, value):
+# 	for i, existing in enumerate(array):
+# 		if existing > value:
+# 			array.insert(i, value)
+# 			return
+# 	array.append(value)
 #----------------------------------------------------------------
 
 
@@ -47,6 +64,26 @@ found_objcets = gc.get_objects()
 print('%d objects before' % len(found_objcets))
 
 import waste_memory
+x = waste_memory.run()
+found_objcets = gc.get_objects()
+print('%d objects after' % len(found_objcets))
+
+for obj in found_objcets[:3]:
+	print(repr(obj)[:100])
+
+# top_n
+
+import tracemalloc
+tracemalloc.start(10) # Save up to 10 stack frames
+
+time1 = tracemalloc.take_snapshot()
+import waste_memory
+x = waste_memory.run()
+time2 = tracemalloc.take_snapshot()
+
+stats = time2.compare_to(time1, 'lineno')
+for stat in stats[:3]:
+	print(stat)
 #----------------------------------------------------------------
 
 
