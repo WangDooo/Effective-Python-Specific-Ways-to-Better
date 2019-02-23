@@ -1,6 +1,38 @@
+import collections
+import random
+
 #================================================================
-# 
+# 46. 使用内置算法与数据结构
 #----------------------------------------------------------------
+# # 1. 双向队列 deque 从该队列的头部或尾部插入或移除一个元素 O(1)
+
+# fifo = collections.deque()
+# for i in range(5):
+# 	fifo.append(2*i)
+# x = fifo.popleft()
+# y = fifo.popleft()
+# print('x=',x,'y=',y,'fifo=',fifo)
+
+# 2. 有序字典 OrderredDict
+a = {}
+a['foo'] = 1
+a['bar'] = 2
+
+while True:
+	z = random.randint(1, 20)
+	b = {}
+	for i in range(z):
+		b[i] = i
+	b['foo'] = 1
+	b['bar'] = 2
+	for i in range(z):
+		del b[i]
+	if str(b) != str(a):
+		break
+
+print(a)
+print(b)
+print(a==b)
 
 #----------------------------------------------------------------
 

@@ -139,7 +139,14 @@ from threading import Lock
 #================================================================
 # 39. 用Queue来协调各线程之间的工作
 #----------------------------------------------------------------
+import collections
 
+class MyQueue(object):
+	def __init__(self):
+		self.items = collections.deque()
+		self.lock = Lock()
+
+myqueue = MyQueue()
 #----------------------------------------------------------------
 
 
