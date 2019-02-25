@@ -1,12 +1,25 @@
 import collections
 import random
 #================================================================
-# 
+# 42. 用functools.wraps定义函数修饰器
 #----------------------------------------------------------------
-
+# 打印某个函数在受到调用时所接收的参数及该函数的返回值
 #----------------------------------------------------------------
+def trace(func):
+	def wrapepr(*args, **kwargs):
+		result = func(*args, **kwargs)
+		print('%s(%r,%r) -> %r' % (func.__name__, args, kwargs, result))
+		return result
+	return wrapepr
 
+@trace # 等效于 fibonacci = trace(fibonacci)
+def fibonacci(n):
+	"""Test the help func"""
+	if n in (0,1):
+		return n
+	return (fibonacci(n-2) + fibonacci(n-1))
 
+fibonacci(5)
 #================================================================
 # 
 #----------------------------------------------------------------
