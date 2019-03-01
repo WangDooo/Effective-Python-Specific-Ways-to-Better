@@ -31,7 +31,31 @@ import random
 #================================================================
 # 考虑以contextlib和with语句来改写可复用的try/finally代码
 #----------------------------------------------------------------
+# import logging
+# from contextlib import *
 
+# def my_function():
+# 	logging.debug('Some debug data')
+# 	logging.error('Error log here')
+# 	logging.debug('More dabug data')
+
+# my_function()
+
+# @contextmanager # 修饰器 可以在with中实现 try finally
+# def debug_logging(level):
+# 	logger = logging.getLogger()
+# 	old_level = logger.getEffectiveLevel()
+# 	logger.setLevel(level)
+# 	try:
+# 		yield
+# 	finally:
+# 		logger.setLevel(old_level)
+
+# with debug_logging(logging.DEBUG):
+# 	print("Before")
+# 	my_function()
+# print('After')
+# my_function()
 #----------------------------------------------------------------
 
 
