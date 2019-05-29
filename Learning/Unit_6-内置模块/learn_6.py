@@ -64,10 +64,24 @@ import random
 #----------------------------------------------------------------
 # 彼此不信任的人或程序之间，如果要进行通信，就应该使用JSON这样的格式
 #----------------------------------------------------------------
+import pickle
+
 class GameState(object):
 	def __init__(self):
 		self.level = 0
 		self.lives = 4
+
+state = GameState()
+state.level += 1 # beat a level
+state.lives -= 1 # lose a live
+
+state_path = './tmp/game_state.bin'
+with open(state_path, 'wb') as f:
+	pickle.dump(state, f)
+
+with open(state_path, 'rb') as f:
+	state_after = pickle.load(f)
+print(state_after.__dict__)
 
 #================================================================
 # 
