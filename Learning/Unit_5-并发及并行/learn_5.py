@@ -139,12 +139,43 @@ from threading import Lock
 #================================================================
 # 39. 用Queue来协调各线程之间的工作
 #----------------------------------------------------------------
+# 采用函数管线 pipeline 协调同时执行的许多事物
+# 任务传递方式 生产-消费队列 producer-consumer queue
+
 import collections
 
 class MyQueue(object):
 	def __init__(self):
 		self.items = collections.deque()
 		self.lock = Lock()
+
+	def put(self, item):
+		with self.lock:
+			self.items.append(item)
+
+	def get(self):
+		with self.lock:
+			return self.items.popleft()
+
+class Worker(Thread):
+	def __init__(self, func, in_queue, out_queue):
+		super().__init__()
+		self.func = func
+		self.in_queue = in_queue
+		self.out_queue = out_queue
+		self.polled_count = 0
+		self.work_done = 0
+	def run(self):
+		while True:
+			self.polled_count += 1
+			try:
+				item = self.in_queue.get()
+			except IndexError:
+				sleep(0.01) # No work to do
+			else:
+				result = self.func(item)
+				self.out_queue.put(result)
+				self.work_done += 1
 
 myqueue = MyQueue()
 #----------------------------------------------------------------
